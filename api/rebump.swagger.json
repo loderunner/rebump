@@ -15,14 +15,14 @@
     "application/json"
   ],
   "paths": {
-    "/echo": {
+    "/bump": {
       "post": {
-        "operationId": "Echo",
+        "operationId": "CreateBump",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/apiEchoResponse"
+              "$ref": "#/definitions/apiBump"
             }
           }
         },
@@ -32,7 +32,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/apiEchoRequest"
+              "$ref": "#/definitions/apiCreateBumpRequest"
             }
           }
         ],
@@ -43,19 +43,49 @@
     }
   },
   "definitions": {
-    "apiEchoRequest": {
+    "BumpSecret": {
       "type": "object",
       "properties": {
-        "message": {
+        "key": {
           "type": "string"
         }
       }
     },
-    "apiEchoResponse": {
+    "apiBump": {
       "type": "object",
       "properties": {
-        "message": {
+        "name": {
           "type": "string"
+        },
+        "location": {
+          "$ref": "#/definitions/apiLocation"
+        },
+        "url": {
+          "type": "string"
+        },
+        "secret": {
+          "$ref": "#/definitions/BumpSecret"
+        }
+      }
+    },
+    "apiCreateBumpRequest": {
+      "type": "object",
+      "properties": {
+        "location": {
+          "$ref": "#/definitions/apiLocation"
+        }
+      }
+    },
+    "apiLocation": {
+      "type": "object",
+      "properties": {
+        "latitude": {
+          "type": "number",
+          "format": "double"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "double"
         }
       }
     }

@@ -8,8 +8,9 @@ It is generated from these files:
 	api/rebump.proto
 
 It has these top-level messages:
-	EchoRequest
-	EchoResponse
+	Bump
+	Location
+	CreateBumpRequest
 */
 package api
 
@@ -34,41 +35,107 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
-type EchoRequest struct {
-	Message string `protobuf:"bytes,1,opt,name=message" json:"message,omitempty"`
+type Bump struct {
+	Name     string       `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	Location *Location    `protobuf:"bytes,2,opt,name=location" json:"location,omitempty"`
+	Url      string       `protobuf:"bytes,3,opt,name=url" json:"url,omitempty"`
+	Secret   *Bump_Secret `protobuf:"bytes,4,opt,name=secret" json:"secret,omitempty"`
 }
 
-func (m *EchoRequest) Reset()                    { *m = EchoRequest{} }
-func (m *EchoRequest) String() string            { return proto.CompactTextString(m) }
-func (*EchoRequest) ProtoMessage()               {}
-func (*EchoRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
+func (m *Bump) Reset()                    { *m = Bump{} }
+func (m *Bump) String() string            { return proto.CompactTextString(m) }
+func (*Bump) ProtoMessage()               {}
+func (*Bump) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
 
-func (m *EchoRequest) GetMessage() string {
+func (m *Bump) GetName() string {
 	if m != nil {
-		return m.Message
+		return m.Name
 	}
 	return ""
 }
 
-type EchoResponse struct {
-	Message string `protobuf:"bytes,1,opt,name=message" json:"message,omitempty"`
+func (m *Bump) GetLocation() *Location {
+	if m != nil {
+		return m.Location
+	}
+	return nil
 }
 
-func (m *EchoResponse) Reset()                    { *m = EchoResponse{} }
-func (m *EchoResponse) String() string            { return proto.CompactTextString(m) }
-func (*EchoResponse) ProtoMessage()               {}
-func (*EchoResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
-
-func (m *EchoResponse) GetMessage() string {
+func (m *Bump) GetUrl() string {
 	if m != nil {
-		return m.Message
+		return m.Url
 	}
 	return ""
+}
+
+func (m *Bump) GetSecret() *Bump_Secret {
+	if m != nil {
+		return m.Secret
+	}
+	return nil
+}
+
+type Bump_Secret struct {
+	Key string `protobuf:"bytes,1,opt,name=key" json:"key,omitempty"`
+}
+
+func (m *Bump_Secret) Reset()                    { *m = Bump_Secret{} }
+func (m *Bump_Secret) String() string            { return proto.CompactTextString(m) }
+func (*Bump_Secret) ProtoMessage()               {}
+func (*Bump_Secret) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0, 0} }
+
+func (m *Bump_Secret) GetKey() string {
+	if m != nil {
+		return m.Key
+	}
+	return ""
+}
+
+type Location struct {
+	Latitude  float64 `protobuf:"fixed64,1,opt,name=latitude" json:"latitude,omitempty"`
+	Longitude float64 `protobuf:"fixed64,2,opt,name=longitude" json:"longitude,omitempty"`
+}
+
+func (m *Location) Reset()                    { *m = Location{} }
+func (m *Location) String() string            { return proto.CompactTextString(m) }
+func (*Location) ProtoMessage()               {}
+func (*Location) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
+
+func (m *Location) GetLatitude() float64 {
+	if m != nil {
+		return m.Latitude
+	}
+	return 0
+}
+
+func (m *Location) GetLongitude() float64 {
+	if m != nil {
+		return m.Longitude
+	}
+	return 0
+}
+
+type CreateBumpRequest struct {
+	Location *Location `protobuf:"bytes,1,opt,name=location" json:"location,omitempty"`
+}
+
+func (m *CreateBumpRequest) Reset()                    { *m = CreateBumpRequest{} }
+func (m *CreateBumpRequest) String() string            { return proto.CompactTextString(m) }
+func (*CreateBumpRequest) ProtoMessage()               {}
+func (*CreateBumpRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
+
+func (m *CreateBumpRequest) GetLocation() *Location {
+	if m != nil {
+		return m.Location
+	}
+	return nil
 }
 
 func init() {
-	proto.RegisterType((*EchoRequest)(nil), "api.EchoRequest")
-	proto.RegisterType((*EchoResponse)(nil), "api.EchoResponse")
+	proto.RegisterType((*Bump)(nil), "api.Bump")
+	proto.RegisterType((*Bump_Secret)(nil), "api.Bump.Secret")
+	proto.RegisterType((*Location)(nil), "api.Location")
+	proto.RegisterType((*CreateBumpRequest)(nil), "api.CreateBumpRequest")
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -82,7 +149,7 @@ const _ = grpc.SupportPackageIsVersion4
 // Client API for Rebump service
 
 type RebumpClient interface {
-	Echo(ctx context.Context, in *EchoRequest, opts ...grpc.CallOption) (*EchoResponse, error)
+	CreateBump(ctx context.Context, in *CreateBumpRequest, opts ...grpc.CallOption) (*Bump, error)
 }
 
 type rebumpClient struct {
@@ -93,9 +160,9 @@ func NewRebumpClient(cc *grpc.ClientConn) RebumpClient {
 	return &rebumpClient{cc}
 }
 
-func (c *rebumpClient) Echo(ctx context.Context, in *EchoRequest, opts ...grpc.CallOption) (*EchoResponse, error) {
-	out := new(EchoResponse)
-	err := grpc.Invoke(ctx, "/api.Rebump/Echo", in, out, c.cc, opts...)
+func (c *rebumpClient) CreateBump(ctx context.Context, in *CreateBumpRequest, opts ...grpc.CallOption) (*Bump, error) {
+	out := new(Bump)
+	err := grpc.Invoke(ctx, "/api.Rebump/CreateBump", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -105,27 +172,27 @@ func (c *rebumpClient) Echo(ctx context.Context, in *EchoRequest, opts ...grpc.C
 // Server API for Rebump service
 
 type RebumpServer interface {
-	Echo(context.Context, *EchoRequest) (*EchoResponse, error)
+	CreateBump(context.Context, *CreateBumpRequest) (*Bump, error)
 }
 
 func RegisterRebumpServer(s *grpc.Server, srv RebumpServer) {
 	s.RegisterService(&_Rebump_serviceDesc, srv)
 }
 
-func _Rebump_Echo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EchoRequest)
+func _Rebump_CreateBump_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateBumpRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RebumpServer).Echo(ctx, in)
+		return srv.(RebumpServer).CreateBump(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.Rebump/Echo",
+		FullMethod: "/api.Rebump/CreateBump",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RebumpServer).Echo(ctx, req.(*EchoRequest))
+		return srv.(RebumpServer).CreateBump(ctx, req.(*CreateBumpRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -135,8 +202,8 @@ var _Rebump_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*RebumpServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Echo",
-			Handler:    _Rebump_Echo_Handler,
+			MethodName: "CreateBump",
+			Handler:    _Rebump_CreateBump_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -146,16 +213,23 @@ var _Rebump_serviceDesc = grpc.ServiceDesc{
 func init() { proto.RegisterFile("api/rebump.proto", fileDescriptor0) }
 
 var fileDescriptor0 = []byte{
-	// 172 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x48, 0x2c, 0xc8, 0xd4,
-	0x2f, 0x4a, 0x4d, 0x2a, 0xcd, 0x2d, 0xd0, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x4e, 0x2c,
-	0xc8, 0x94, 0x92, 0x49, 0xcf, 0xcf, 0x4f, 0xcf, 0x49, 0xd5, 0x07, 0xc9, 0x26, 0xe6, 0xe5, 0xe5,
-	0x97, 0x24, 0x96, 0x64, 0xe6, 0xe7, 0x15, 0x43, 0x94, 0x28, 0xa9, 0x73, 0x71, 0xbb, 0x26, 0x67,
-	0xe4, 0x07, 0xa5, 0x16, 0x96, 0xa6, 0x16, 0x97, 0x08, 0x49, 0x70, 0xb1, 0xe7, 0xa6, 0x16, 0x17,
-	0x27, 0xa6, 0xa7, 0x4a, 0x30, 0x2a, 0x30, 0x6a, 0x70, 0x06, 0xc1, 0xb8, 0x4a, 0x1a, 0x5c, 0x3c,
-	0x10, 0x85, 0xc5, 0x05, 0xf9, 0x79, 0xc5, 0xa9, 0xb8, 0x55, 0x1a, 0xb9, 0x73, 0xb1, 0x05, 0x81,
-	0x5d, 0x21, 0x64, 0xcb, 0xc5, 0x02, 0xd2, 0x23, 0x24, 0xa0, 0x97, 0x58, 0x90, 0xa9, 0x87, 0x64,
-	0x8f, 0x94, 0x20, 0x92, 0x08, 0xc4, 0x40, 0x25, 0x81, 0xa6, 0xcb, 0x4f, 0x26, 0x33, 0x71, 0x29,
-	0xb1, 0xea, 0xa7, 0x26, 0x67, 0xe4, 0x5b, 0x31, 0x6a, 0x25, 0xb1, 0x81, 0x9d, 0x68, 0x0c, 0x08,
-	0x00, 0x00, 0xff, 0xff, 0x2f, 0x23, 0x77, 0x98, 0xd9, 0x00, 0x00, 0x00,
+	// 280 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x50, 0x3d, 0x4f, 0x84, 0x40,
+	0x10, 0xcd, 0x02, 0x12, 0x18, 0x63, 0x82, 0x5b, 0x18, 0x42, 0xae, 0xb8, 0x50, 0xa1, 0x05, 0x24,
+	0x67, 0x67, 0x61, 0xe2, 0x47, 0xa7, 0xd5, 0xfa, 0x0b, 0xf6, 0xce, 0x09, 0x21, 0x02, 0xbb, 0xc2,
+	0x6e, 0x61, 0xeb, 0x5f, 0xb0, 0xf6, 0x57, 0xf9, 0x17, 0xfc, 0x21, 0x66, 0x07, 0xe4, 0x62, 0x4c,
+	0xae, 0x9b, 0x7d, 0x6f, 0xdf, 0x7b, 0xf3, 0x06, 0x12, 0xa9, 0x9b, 0x6a, 0xc0, 0xad, 0xed, 0x74,
+	0xa9, 0x07, 0x65, 0x14, 0xf7, 0xa5, 0x6e, 0xb2, 0x55, 0xad, 0x54, 0xdd, 0x62, 0xe5, 0x58, 0xd9,
+	0xf7, 0xca, 0x48, 0xd3, 0xa8, 0x7e, 0x9c, 0xbe, 0xe4, 0x9f, 0x0c, 0x82, 0x5b, 0xdb, 0x69, 0xce,
+	0x21, 0xe8, 0x65, 0x87, 0x29, 0x5b, 0xb3, 0x22, 0x16, 0x34, 0xf3, 0x73, 0x88, 0x5a, 0xb5, 0xa3,
+	0xff, 0xa9, 0xb7, 0x66, 0xc5, 0xf1, 0xe6, 0xa4, 0x94, 0xba, 0x29, 0x1f, 0x67, 0x50, 0x2c, 0x34,
+	0x4f, 0xc0, 0xb7, 0x43, 0x9b, 0xfa, 0xa4, 0x76, 0x23, 0x2f, 0x20, 0x1c, 0x71, 0x37, 0xa0, 0x49,
+	0x03, 0x92, 0x26, 0x24, 0x75, 0x59, 0xe5, 0x13, 0xe1, 0x62, 0xe6, 0xb3, 0x0c, 0xc2, 0x09, 0x71,
+	0x2e, 0x2f, 0xf8, 0x36, 0xef, 0xe0, 0xc6, 0xfc, 0x1e, 0xa2, 0xdf, 0x34, 0x9e, 0x41, 0xd4, 0x4a,
+	0xd3, 0x18, 0xfb, 0x3c, 0xad, 0xc9, 0xc4, 0xf2, 0xe6, 0x2b, 0x88, 0x5b, 0xd5, 0xd7, 0x13, 0xe9,
+	0x11, 0xb9, 0x07, 0xf2, 0x6b, 0x38, 0xbd, 0x1b, 0x50, 0x1a, 0x74, 0xf1, 0x02, 0x5f, 0x2d, 0x8e,
+	0xe6, 0x4f, 0x3b, 0x76, 0xb0, 0xdd, 0xe6, 0x01, 0x42, 0x41, 0x87, 0xe5, 0x37, 0x00, 0x7b, 0x27,
+	0x7e, 0x46, 0x82, 0x7f, 0xd6, 0x59, 0xbc, 0x74, 0xcd, 0x93, 0xf7, 0xaf, 0xef, 0x0f, 0x0f, 0xf2,
+	0xa3, 0xca, 0xe9, 0xaf, 0xd8, 0xc5, 0x36, 0xa4, 0xcb, 0x5f, 0xfe, 0x04, 0x00, 0x00, 0xff, 0xff,
+	0x8e, 0xaf, 0x9c, 0x96, 0xb0, 0x01, 0x00, 0x00,
 }

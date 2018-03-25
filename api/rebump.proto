@@ -3,19 +3,30 @@ package api;
 
 import "google/api/annotations.proto";
 
+message Bump {
+    message Secret {
+        string key = 1;
+    }
+    string name = 1;
+    Location location = 2;
+    string url = 3;
+    Secret secret = 4;
+}
+
+message Location {
+    double latitude = 1;
+    double longitude = 2;
+}
+
 service Rebump {
-    rpc Echo(EchoRequest) returns (EchoResponse) {
+    rpc CreateBump(CreateBumpRequest) returns (Bump) {
         option (google.api.http) = {
-            post: "/echo",
+            post: "/bump",
             body: "*"
         };
     }
 }
 
-message EchoRequest {
-    string message = 1;
-}
-
-message EchoResponse {
-    string message = 1;
+message CreateBumpRequest {
+    Location location = 1;
 }

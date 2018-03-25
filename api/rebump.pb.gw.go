@@ -28,8 +28,8 @@ var _ status.Status
 var _ = runtime.String
 var _ = utilities.NewDoubleArray
 
-func request_Rebump_Echo_0(ctx context.Context, marshaler runtime.Marshaler, client RebumpClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq EchoRequest
+func request_Rebump_CreateBump_0(ctx context.Context, marshaler runtime.Marshaler, client RebumpClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq CreateBumpRequest
 	var metadata runtime.ServerMetadata
 
 	if req.ContentLength > 0 {
@@ -38,7 +38,7 @@ func request_Rebump_Echo_0(ctx context.Context, marshaler runtime.Marshaler, cli
 		}
 	}
 
-	msg, err := client.Echo(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.CreateBump(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
@@ -81,7 +81,7 @@ func RegisterRebumpHandler(ctx context.Context, mux *runtime.ServeMux, conn *grp
 // "RebumpClient" to call the correct interceptors.
 func RegisterRebumpHandlerClient(ctx context.Context, mux *runtime.ServeMux, client RebumpClient) error {
 
-	mux.Handle("POST", pattern_Rebump_Echo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_Rebump_CreateBump_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
@@ -99,14 +99,14 @@ func RegisterRebumpHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Rebump_Echo_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Rebump_CreateBump_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Rebump_Echo_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Rebump_CreateBump_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -114,9 +114,9 @@ func RegisterRebumpHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 }
 
 var (
-	pattern_Rebump_Echo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"echo"}, ""))
+	pattern_Rebump_CreateBump_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"bump"}, ""))
 )
 
 var (
-	forward_Rebump_Echo_0 = runtime.ForwardResponseMessage
+	forward_Rebump_CreateBump_0 = runtime.ForwardResponseMessage
 )
