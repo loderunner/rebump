@@ -1,23 +1,27 @@
 package server
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"net/http"
 	"strings"
 
+	"github.com/garyburd/redigo/redis"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
 	"github.com/loderunner/rebump/api"
 )
 
-func ListenAndServeGRPC(address string) error {
+type Server struct {
+	Tile38 redis.Conn
+}
+
+func (s *Server) ListenAndServeGRPC(address string) error {
 	opts := []grpc.ServerOption{}
 	grpcServer := grpc.NewServer(opts...)
-	s := Server{}
-	api.RegisterRebumpServer(grpcServer, &s)
+	api.RegisterRebumpServer(grpcServer, s)
 
 	lis, err := net.Listen("tcp", address)
 	if err != nil {
@@ -31,7 +35,7 @@ func headerMatcher(headerName string) (string, bool) {
 	return strings.ToLower(headerName), true
 }
 
-func ListenAndServeREST(restAddress, grpcAddress string) error {
+func (s *Server) ListenAndServeREST(restAddress, grpcAddress string) error {
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
