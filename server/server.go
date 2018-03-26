@@ -40,7 +40,7 @@ func (s *Server) ListenAndServeREST(restAddress, grpcAddress string) error {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
-	mux := runtime.NewServeMux(runtime.WithIncomingHeaderMatcher(headerMatcher))
+	mux := runtime.NewServeMux(runtime.WithIncomingHeaderMatcher(runtime.DefaultHeaderMatcher))
 
 	opts := []grpc.DialOption{grpc.WithInsecure()}
 
