@@ -7,23 +7,56 @@ import (
 	"github.com/garyburd/redigo/redis"
 	"github.com/loderunner/rebump/server"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/pflag"
 )
 
 const timeout = 45 * time.Second
 
-func main() {
-	log.SetOutput(os.Stdout)
-	log.SetLevel(log.DebugLevel)
-	log.StandardLogger().Formatter.(*log.TextFormatter).FullTimestamp = true
+// global variables for the flags
+var (
+	version        bool
+	grpcAddress    string
+	restAddress    string
+	couchDBAddress string
+	tile38Address  string
+	logLevel       uint32
+)
 
-	grpcAddress := ":8080"
-	restAddress := ":8081"
+func parseFlags(args []string) {
+
+	// Version
+	pflag.BoolVarP(&version, "version", "V", false, "display version and quit")
+
+	// gRPC  address
+	pflag.StringVar(&grpcAddress, "grpc-addr", ":8080", "address to bind the gRPC server to")
+
+	// REST address
+	pflag.StringVar(&restAddress, "rest-addr", ":8081", "address to bind the REST server to")
+
+	// CouchDB address
+	pflag.StringVar(&couchDBAddress, "couchdb-addr", "127.0.0.1:5984", "address of the CouchDB server")
+
+	// Tile38 address
+	pflag.StringVar(&tile38Address, "tile38-addr", "127.0.0.1:9851", "address of the Tile38 server")
+
+	// Verbosity
+	pflag.Uint32VarP(&logLevel, "verbose", "v", uint32(log.InfoLevel), "verbosity level [0:quiet - 5:debug]")
+
+	pflag.Parse()
+}
+
+func main() {
+	parseFlags(os.Args)
+
+	log.SetOutput(os.Stdout)
+	log.SetLevel(log.Level(logLevel))
+	log.StandardLogger().Formatter.(*log.TextFormatter).FullTimestamp = true
 
 	srv := new(server.Server)
 
 	// Connect to Tile38 server
 	var err error
-	srv.Tile38, err = redis.Dial("tcp", "localhost:9851",
+	srv.Tile38, err = redis.Dial("tcp", tile38Address,
 		redis.DialConnectTimeout(timeout),
 		redis.DialReadTimeout(timeout),
 		redis.DialWriteTimeout(timeout),
