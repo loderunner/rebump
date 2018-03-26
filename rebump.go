@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"time"
 
@@ -10,7 +11,9 @@ import (
 	"github.com/spf13/pflag"
 )
 
-const timeout = 45 * time.Second
+const VERSION = "0.0.0"
+
+const TIMEOUT = 45 * time.Second
 
 // global variables for the flags
 var (
@@ -48,6 +51,10 @@ func parseFlags(args []string) {
 func main() {
 	parseFlags(os.Args)
 
+	if version {
+		fmt.Println("re:BUMP version", version)
+	}
+
 	log.SetOutput(os.Stdout)
 	log.SetLevel(log.Level(logLevel))
 	log.StandardLogger().Formatter.(*log.TextFormatter).FullTimestamp = true
@@ -57,9 +64,9 @@ func main() {
 	// Connect to Tile38 server
 	var err error
 	srv.Tile38, err = redis.Dial("tcp", tile38Address,
-		redis.DialConnectTimeout(timeout),
-		redis.DialReadTimeout(timeout),
-		redis.DialWriteTimeout(timeout),
+		redis.DialConnectTimeout(TIMEOUT),
+		redis.DialReadTimeout(TIMEOUT),
+		redis.DialWriteTimeout(TIMEOUT),
 	)
 	if err != nil {
 		log.Fatalf("Failed to connect to Tile38 server: %s", err)
