@@ -24,7 +24,8 @@ import (
 )
 
 type Server struct {
-	Tile38 redis.Conn
+	Tile38         redis.Conn
+	CouchDBAddress string
 }
 
 func (s *Server) ListenAndServeGRPC(address string) error {

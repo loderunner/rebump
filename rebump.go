@@ -72,6 +72,8 @@ func main() {
 		log.Fatalf("Failed to connect to Tile38 server: %s", err)
 	}
 
+	srv.CouchDBAddress = couchDBAddress
+
 	go func() {
 		log.Infof("Serving REST API on \"%s\"", restAddress)
 		err := srv.ListenAndServeREST(restAddress, grpcAddress)

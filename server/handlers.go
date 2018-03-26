@@ -66,7 +66,7 @@ func (srv *Server) CreateBump(ctx context.Context, req *api.CreateBumpRequest) (
 		return nil, status.Error(codes.Internal, "failed to create bump")
 	}
 
-	url := "http://localhost:5984/bump/" + toHex(&id)
+	url := "http://" + srv.CouchDBAddress + "/bump/" + toHex(&id)
 	couchReq, err := http.NewRequest(http.MethodPut, url, bytes.NewReader(buf))
 	if err != nil {
 		log.Errorf("Failed to prepare CouchDB request: %s", err)
@@ -172,7 +172,7 @@ func (srv *Server) GetNearby(ctx context.Context, req *api.GetNearbyRequest) (re
 	}
 
 	// Get Bump from CouchDB
-	url := "http://localhost:5984/bump/" + toHex(u)
+	url := "http://" + srv.CouchDBAddress + "/bump/" + toHex(u)
 	couchRes, err := http.DefaultClient.Get(url)
 	if err != nil {
 		log.Errorf("Failed to retrieve Bump from CouchDB: %s", err)
