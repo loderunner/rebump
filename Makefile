@@ -1,6 +1,4 @@
-PKG = "rebump"
 GOPATH ?= $(shell go env GOPATH)
-GO_PACKAGES := $(shell go list ./... | grep -v /vendor/)
 BINARIES = rebump
 API_FILES = api/rebump.pb.go api/rebump.pb.gw.go api/rebump.swagger.json
 
@@ -43,10 +41,13 @@ realclean: ## Clean compiled binaries and all generated files
 	@rm -f ${API_FILES}
 
 test: dep ## Run tests
-	@go test -short ${GO_PACKAGES}
+	@go test ./...
 
 race: dep ## Run tests with race detector
-	@go test -race -short ${GO_PACKAGES}
+	@go test -race ./...
 
 msan: dep ## Run tests with memory sanitizer
-	@go test -msan -short ${GO_PACKAGES}
+	@go test -msan ./...
+
+lint: ## Run linter on all go sources
+	@golint -set_exit_status ./...
