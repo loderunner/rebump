@@ -3,8 +3,10 @@ sudo: required
 services:
   - docker
 
-script:
+before_install:
   - docker pull loderunner/rebump
+
+script:
   - docker run loderunner/rebump  /bin/bash -c "make"
   - docker run loderunner/rebump  /bin/bash -c "make test"
   - docker run loderunner/rebump  /bin/bash -c "make race"
