@@ -13,6 +13,8 @@ const timeout = 45 * time.Second
 
 func main() {
 	log.SetOutput(os.Stdout)
+	log.SetLevel(log.DebugLevel)
+	log.StandardLogger().Formatter.(*log.TextFormatter).FullTimestamp = true
 
 	grpcAddress := ":8080"
 	restAddress := ":8081"

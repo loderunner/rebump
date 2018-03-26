@@ -114,7 +114,7 @@ func logInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServer
 		byteSize = strconv.Itoa(proto.Size(res.(proto.Message)))
 	} else if grpcErr, ok := status.FromError(err); ok {
 		statusCode = grpcErr.Code().String()
-		byteSize = strconv.Itoa(proto.Size(err.(proto.Message)))
+		byteSize = strconv.Itoa(proto.Size(grpcErr.Proto()))
 	}
 
 	// Get metadata from context
