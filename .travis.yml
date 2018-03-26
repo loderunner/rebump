@@ -1,0 +1,12 @@
+sudo: required
+
+services:
+  - docker
+
+script:
+  - docker pull loderunner/rebump
+  - docker run loderunner/rebump  /bin/bash -c "make"
+  - docker run loderunner/rebump  /bin/bash -c "make test"
+  - docker run loderunner/rebump  /bin/bash -c "make race"
+  - docker run loderunner/rebump  /bin/bash -c "make msan"
+  - docker run loderunner/rebump  /bin/bash -c "make lint"
