@@ -40,6 +40,38 @@
           "Rebump"
         ]
       }
+    },
+    "/bump:nearby": {
+      "get": {
+        "operationId": "GetNearby",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/apiBump"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "location.latitude",
+            "in": "query",
+            "required": false,
+            "type": "number",
+            "format": "double"
+          },
+          {
+            "name": "location.longitude",
+            "in": "query",
+            "required": false,
+            "type": "number",
+            "format": "double"
+          }
+        ],
+        "tags": [
+          "Rebump"
+        ]
+      }
     }
   },
   "definitions": {
