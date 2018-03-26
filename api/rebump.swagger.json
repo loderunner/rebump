@@ -43,7 +43,7 @@
     },
     "/bump:nearby": {
       "get": {
-        "operationId": "GetNearby",
+        "operationId": "GetBumpNearby",
         "responses": {
           "200": {
             "description": "",

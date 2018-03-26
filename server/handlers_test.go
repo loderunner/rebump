@@ -35,6 +35,7 @@ func setUp() {
 	if err != nil {
 		panic(fmt.Sprintf("failed to connect to Tile38 server: %s", err))
 	}
+	srv.CouchDBAddress = "localhost:5984"
 }
 
 func tearDown() {
@@ -42,12 +43,45 @@ func tearDown() {
 }
 
 func TestCreateBump(t *testing.T) {
-
 	req := &api.CreateBumpRequest{Location: &api.Location{Latitude: 1435.0, Longitude: 234.0}}
 	res, err := srv.CreateBump(context.Background(), req)
 	if err != nil {
 		t.Errorf("expected %s, got error \"%s\"", req.Location, err)
 	} else if !proto.Equal(res.Location, req.Location) {
 		t.Errorf("expected %s, got %s", req.Location, res.Location)
+	}
+}
+
+func TestGetBumpNearby(t *testing.T) {
+	loc := &api.Location{Latitude: 3.8, Longitude: -89.4}
+
+	{
+		req := &api.CreateBumpRequest{Location: loc}
+		_, err := srv.CreateBump(context.Background(), req)
+		if err != nil {
+			t.Errorf("failed to create bump: %s", err)
+		}
+	}
+
+	req := &api.GetBumpNearbyRequest{Location: &api.Location{Latitude: 3.8, Longitude: -89.4}}
+	res, err := srv.GetBumpNearby(context.Background(), req)
+	if err != nil {
+		t.Errorf("expected %s, got error \"%s\"", loc, err)
+	} else if !proto.Equal(res.Location, loc) {
+		t.Errorf("expected %s, got %s", loc, res.Location)
+	}
+
+	req = &api.GetBumpNearbyRequest{Location: &api.Location{Latitude: 3.80001, Longitude: -89.4}}
+	res, err = srv.GetBumpNearby(context.Background(), req)
+	if err != nil {
+		t.Errorf("expected %s, got error \"%s\"", loc, err)
+	} else if !proto.Equal(res.Location, loc) {
+		t.Errorf("expected %s, got %s", loc, res.Location)
+	}
+
+	req = &api.GetBumpNearbyRequest{Location: &api.Location{Latitude: -3.80001, Longitude: -89.4}}
+	res, err = srv.GetBumpNearby(context.Background(), req)
+	if err == nil {
+		t.Errorf("expected error, got %s", res)
 	}
 }

@@ -118,7 +118,7 @@ func (srv *Server) CreateBump(ctx context.Context, req *api.CreateBumpRequest) (
 	return res, nil
 }
 
-func (srv *Server) GetNearby(ctx context.Context, req *api.GetNearbyRequest) (res *api.Bump, err error) {
+func (srv *Server) GetBumpNearby(ctx context.Context, req *api.GetBumpNearbyRequest) (res *api.Bump, err error) {
 	if req.Location == nil {
 		log.Errorf("Missing location in request: %s", req)
 		return nil, status.Error(codes.InvalidArgument, "missing location in request")
