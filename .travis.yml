@@ -7,21 +7,24 @@ services:
 
 before_install:
   - docker pull tile38/tile38:1.11.1
-  - docker run -d -p 9851:9851 tile38/tile38
+  - docker run -d --name tile38 tile38/tile38
   - docker pull couchdb:2.1
-  - docker run -d -p 5984:5984 -d couchdb
+  - docker run -d --name couchdb couchdb
   - docker pull loderunner/rebump
+
+env: 
+  - TEST_TILE38_ADDR=tile38:9851 TEST_COUCHDB_ADDR=couchdb:5984
 
 jobs:
   include:
     - script:
-      - docker run loderunner/rebump  /bin/bash -c "make"
+      - docker run loderunner/rebump /bin/bash -c "make"
     - script:
-      - docker run loderunner/rebump  /bin/bash -c "make test"
+      - docker run loderunner/rebump /bin/bash -c "make test"
     - script:
-      - docker run loderunner/rebump  /bin/bash -c "make race"
+      - docker run loderunner/rebump /bin/bash -c "make race"
     - script:
-      - docker run loderunner/rebump  /bin/bash -c "make msan"
+      - docker run loderunner/rebump /bin/bash -c "make msan"
     - script:
-      - docker run loderunner/rebump  /bin/bash -c "make lint"
+      - docker run loderunner/rebump /bin/bash -c "make lint"
 

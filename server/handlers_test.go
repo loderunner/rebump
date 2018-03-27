@@ -25,9 +25,18 @@ func TestMain(m *testing.M) {
 }
 
 func setUp() {
+	tile38Addr := os.Getenv("TEST_TILE38_ADDR")
+	if tile38Addr == "" {
+		tile38Addr = "localhost:9851"
+	}
+	couchDBAddr := os.Getenv("TEST_COUCHDB_ADDR")
+	if couchDBAddr == "" {
+		couchDBAddr = "localhost:5984"
+	}
+
 	srv = new(Server)
 	var err error
-	srv.Tile38, err = redis.Dial("tcp", "localhost:9851",
+	srv.Tile38, err = redis.Dial("tcp", tile38Addr,
 		redis.DialConnectTimeout(timeout),
 		redis.DialReadTimeout(timeout),
 		redis.DialWriteTimeout(timeout),
@@ -35,7 +44,7 @@ func setUp() {
 	if err != nil {
 		panic(fmt.Sprintf("failed to connect to Tile38 server: %s", err))
 	}
-	srv.CouchDBAddress = "localhost:5984"
+	srv.CouchDBAddress = couchDBAddr
 }
 
 func tearDown() {
