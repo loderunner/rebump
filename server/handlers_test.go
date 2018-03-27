@@ -17,20 +17,14 @@ var srv *Server
 
 const timeout = 45 * time.Second
 
-func TestMain(m *testing.M) {
-	setUp()        // Setup for tests
-	res := m.Run() // Run the actual tests
-	tearDown()     // Teardown after running the tests
-	os.Exit(res)
-}
-
 func setUp() {
-	tile38Addr := os.Getenv("TEST_TILE38_ADDR")
-	if tile38Addr == "" {
+	tile38Addr, ok := os.LookupEnv("TEST_TILE38_ADDR")
+	if !ok {
 		tile38Addr = "localhost:9851"
 	}
-	couchDBAddr := os.Getenv("TEST_COUCHDB_ADDR")
-	if couchDBAddr == "" {
+
+	couchDBAddr, ok := os.LookupEnv("TEST_COUCHDB_ADDR")
+	if !ok {
 		couchDBAddr = "localhost:5984"
 	}
 
@@ -52,6 +46,8 @@ func tearDown() {
 }
 
 func TestCreateBump(t *testing.T) {
+	setUp()
+
 	req := &api.CreateBumpRequest{Location: &api.Location{Latitude: 1435.0, Longitude: 234.0}}
 	res, err := srv.CreateBump(context.Background(), req)
 	if err != nil {
@@ -59,9 +55,13 @@ func TestCreateBump(t *testing.T) {
 	} else if !proto.Equal(res.Location, req.Location) {
 		t.Errorf("expected %s, got %s", req.Location, res.Location)
 	}
+
+	tearDown()
 }
 
 func TestGetBumpNearby(t *testing.T) {
+	setUp()
+
 	loc := &api.Location{Latitude: 3.8, Longitude: -89.4}
 
 	{
@@ -93,4 +93,6 @@ func TestGetBumpNearby(t *testing.T) {
 	if err == nil {
 		t.Errorf("expected error, got %s", res)
 	}
+
+	tearDown()
 }
