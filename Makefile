@@ -5,14 +5,15 @@ API_FILES = api/rebump.pb.go api/rebump.pb.gw.go api/rebump.swagger.json
 .PHONY: build api dep test race msan
 
 build: api dep ## Build rebump
-	@go build .
+	@go build -v .
 
 dep: api ## Fetch dependencies
-	@go get ./...
+	@go get -v ./...
 
 api: $(API_FILES) ## Auto-generate gRPC/REST Go sources
 
 api/rebump.pb.go: api/rebump.proto
+	@echo $@
 	@protoc -I. \
 		-I${GOPATH}/src \
 		-I${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
@@ -20,6 +21,7 @@ api/rebump.pb.go: api/rebump.proto
 		api/rebump.proto
 
 api/rebump.pb.gw.go: api/rebump.proto
+	@echo $@
 	@protoc -I. \
 		-I${GOPATH}/src \
 		-I${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
@@ -27,6 +29,7 @@ api/rebump.pb.gw.go: api/rebump.proto
 		api/rebump.proto
 
 api/rebump.swagger.json: api/rebump.proto
+	@echo $@
 	@protoc -I. \
 		-I${GOPATH}/src \
 		-I${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
@@ -34,11 +37,11 @@ api/rebump.swagger.json: api/rebump.proto
 		api/rebump.proto
 
 clean: ## Clean compiled binaries
-	@rm -f ${BINARIES}
+	@rm -vf ${BINARIES}
 
 realclean: ## Clean compiled binaries and all generated files
-	@rm -f ${BINARIES}
-	@rm -f ${API_FILES}
+	@rm -vf ${BINARIES}
+	@rm -vf ${API_FILES}
 
 test: dep ## Run tests
 	@go test ./...
