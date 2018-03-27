@@ -4,11 +4,22 @@ services:
   - docker
 
 before_install:
+  - docker pull tile38/tile38:1.11
+  - docker run -p 9851:9851 tile38/tile38
+  - docker pull couchdb:2.1
+  - docker run -p 5984:5984 -d couchdb
   - docker pull loderunner/rebump
 
-script:
-  - docker run loderunner/rebump  /bin/bash -c "make"
-  - docker run loderunner/rebump  /bin/bash -c "make test"
-  - docker run loderunner/rebump  /bin/bash -c "make race"
-  - docker run loderunner/rebump  /bin/bash -c "make msan"
-  - docker run loderunner/rebump  /bin/bash -c "make lint"
+jobs:
+  include:
+    - script:
+      - docker run loderunner/rebump  /bin/bash -c "make"
+    - script:
+      - docker run loderunner/rebump  /bin/bash -c "make test"
+    - script:
+      - docker run loderunner/rebump  /bin/bash -c "make race"
+    - script:
+      - docker run loderunner/rebump  /bin/bash -c "make msan"
+    - script:
+      - docker run loderunner/rebump  /bin/bash -c "make lint"
+
