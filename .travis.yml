@@ -7,9 +7,9 @@ services:
 
 before_install:
   - docker pull tile38/tile38:1.11.1
-  - docker run -p 9851:9851 tile38/tile38
+  - docker run -d -p 9851:9851 tile38/tile38
   - docker pull couchdb:2.1
-  - docker run -p 5984:5984 -d couchdb
+  - docker run -d -p 5984:5984 -d couchdb
   - docker pull loderunner/rebump
 
 jobs:
