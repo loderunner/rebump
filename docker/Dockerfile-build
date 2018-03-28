@@ -6,8 +6,6 @@ ENV workdir=/go/src/github.com/loderunner/rebump
 RUN mkdir -p ${workdir}
 WORKDIR ${workdir}
 
-ADD . ${workdir}
-
 # Install golint + grpc-gateway plugin for protoc + goose + caddy
 RUN go get -u github.com/golang/lint/golint \
     && go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway \
@@ -32,9 +30,7 @@ RUN wget -O /tmp/protoc-3.5.1-linux-x86_64.zip https://github.com/google/protobu
     && mkdir -p /tmp/protoc3 \
     && unzip /tmp/protoc-3.5.1-linux-x86_64.zip -d /tmp/protoc3 \
     && rsync -az /tmp/protoc3/bin/ /usr/bin/ \
-    && rsync -az /tmp/protoc3/include/ /usr/include/ \
-    && rm -rf /tmp/protoc3 \
-    && rm /tmp/protoc-3.5.1-linux-x86_64.zip
+    && rsync -az /tmp/protoc3/include/ /usr/include/
 
 # Cleanup
 RUN apt-get clean \
