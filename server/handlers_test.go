@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"os"
 	"testing"
 	"time"
@@ -28,8 +29,21 @@ func setUp() {
 		couchDBAddr = "localhost:5984"
 	}
 
+	// Ensure database exists
+	url := "http://" + couchDBAddr + "/bump"
+	couchReq, err := http.NewRequest(http.MethodPut, url, nil)
+	if err != nil {
+		panic(err)
+	}
+	couchRes, err := http.DefaultClient.Do(couchReq)
+	if err != nil {
+		panic(err)
+	}
+	if couchRes.StatusCode != http.StatusCreated && couchRes.StatusCode != http.StatusPreconditionFailed {
+		panic("Couldn't create database: " + couchRes.Status)
+	}
+
 	srv = new(Server)
-	var err error
 	srv.Tile38, err = redis.Dial("tcp", tile38Addr,
 		redis.DialConnectTimeout(timeout),
 		redis.DialReadTimeout(timeout),
