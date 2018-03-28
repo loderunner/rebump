@@ -6,22 +6,25 @@ services:
   - docker
 
 before_install:
+  - docker network create rebump-net
   - docker pull tile38/tile38:1.11.1
-  - docker run -d --name tile38 tile38/tile38
+  - docker run -d --name=tile38 tile38/tile38
+  - docker network connect --alias=tile38 rebump-net tile38
   - docker pull couchdb:2.1
-  - docker run -d --name couchdb couchdb
+  - docker run -d --name=couchdb couchdb
+  - docker network connect --alias=couchdb rebump-net couchdb
   - docker pull loderunner/rebump
 
 jobs:
   include:
     - script:
-      - docker run -e TEST_TILE38_ADDR=tile38:9851 -e TEST_COUCHDB_ADDR=couchdb:5984 loderunner/rebump /bin/bash -c "make"
+      - docker run -e --env-file=docker/test.env --network=rebump-net loderunner/rebump make
     - script:
-      - docker run -e TEST_TILE38_ADDR=tile38:9851 -e TEST_COUCHDB_ADDR=couchdb:5984 loderunner/rebump /bin/bash -c "make test"
+      - docker run -e --env-file=docker/test.env --network=rebump-net loderunner/rebump make test
     - script:
-      - docker run -e TEST_TILE38_ADDR=tile38:9851 -e TEST_COUCHDB_ADDR=couchdb:5984 loderunner/rebump /bin/bash -c "make race"
+      - docker run -e --env-file=docker/test.env --network=rebump-net loderunner/rebump make race
     - script:
-      - docker run -e TEST_TILE38_ADDR=tile38:9851 -e TEST_COUCHDB_ADDR=couchdb:5984 loderunner/rebump /bin/bash -c "make msan"
+      - docker run -e --env-file=docker/test.env --network=rebump-net loderunner/rebump make msan
     - script:
-      - docker run -e TEST_TILE38_ADDR=tile38:9851 -e TEST_COUCHDB_ADDR=couchdb:5984 loderunner/rebump /bin/bash -c "make lint"
+      - docker run -e --env-file=docker/test.env --network=rebump-net loderunner/rebump make lint
 
