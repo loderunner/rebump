@@ -15,16 +15,19 @@ before_install:
   - docker network connect --alias=couchdb rebump-net couchdb
   - docker pull loderunner/rebump
 
+env:
+  - DOCKER_OPTS="$DOCKER_OPTS --mount=type=bind,src=$PWD,dst=/go/src/github.com/loderunner/rebump"
+
 jobs:
   include:
     - script:
-      - docker run -e --env-file=docker/test.env --network=rebump-net loderunner/rebump make
+      - docker run $DOCKER_OPTS loderunner/rebump /bin/bash -c "make && ./rebump -V"
     - script:
-      - docker run -e --env-file=docker/test.env --network=rebump-net loderunner/rebump make test
+      - docker run $DOCKER_OPTS loderunner/rebump make test
     - script:
-      - docker run -e --env-file=docker/test.env --network=rebump-net loderunner/rebump make race
+      - docker run $DOCKER_OPTS loderunner/rebump make race
     - script:
-      - docker run -e --env-file=docker/test.env --network=rebump-net loderunner/rebump make msan
+      - docker run $DOCKER_OPTS loderunner/rebump make msan
     - script:
-      - docker run -e --env-file=docker/test.env --network=rebump-net loderunner/rebump make lint
+      - docker run $DOCKER_OPTS loderunner/rebump make lint
 
