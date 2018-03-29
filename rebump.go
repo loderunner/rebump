@@ -52,7 +52,8 @@ func main() {
 	parseFlags(os.Args)
 
 	if version {
-		fmt.Println("re:BUMP version", version)
+		fmt.Println("re:BUMP version", VERSION)
+		os.Exit(0)
 	}
 
 	log.SetOutput(os.Stdout)
